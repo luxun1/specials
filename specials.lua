@@ -1,6 +1,6 @@
 http = require "socket.http"
 require "socket"
-socket.http.TIMEOUT=360
+
 
 local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
