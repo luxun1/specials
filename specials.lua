@@ -41,3 +41,25 @@ for element in string.gmatch(response, "<h4>(.-)</h4>") do
 end
 
 local gone = output:write(games)
+
+local smtp = require("socket.smtp")
+
+from = "<reminder@steam.com>"
+
+rcpt = {
+  "<dbenstock@gmail.com>",
+}
+
+mesgt = {
+  headers = {
+    to = "Daniel Benstock <dbenstock@gmail.com>",
+    subject = "Games you want are on offer"
+  },
+  body = games
+}
+
+r, e = smtp.send{
+  from = from,
+  rcpt = rcpt, 
+  source = smtp.message(mesgt)
+}
