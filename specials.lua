@@ -2,9 +2,14 @@ http = require "socket.http"
 require "socket"
 socket.http.TIMEOUT=360
 
+function round2(num, idp)
+  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
+end
+
+
 local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
-local games = os.date() .. "\nGame\tOrignal Price\tReduced Price\n"
+local games = os.date() .. "\nGame\tOrignal Price\tReduced Price\tDiscount\n"
 
 local response = http.request("http://store.steampowered.com/search/?specials=1")
 
@@ -13,15 +18,22 @@ for element in string.gmatch(response, "<h4>(.-)</h4>") do
 
 
 
-  local start = string.find(response, element)
+	local start = string.find(response, element)
 
 	local original = string.match(response, "</h4>.-<strike>&#163;(.-)</strike>", start)
 
 	local reduced = string.match(response, "</strike>.-<br>&#163;(.-)</div>", start)
 
+
 	if element and original and reduced then
 
-		games = games .. element .. "\t£" .. original .. "\t£" .. reduced .. "\n"
+		local priceDiff = original - reduced
+
+		local percentageDiff = priceDiff / original * 100
+
+		local percentageDiff = round2(percentageDiff, 0)
+
+		games = games .. element .. "\t£" .. original .. "\t£" .. reduced .. "\t" .. percentageDiff .. "%\n"
 
 	end
 
