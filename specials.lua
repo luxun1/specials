@@ -4,7 +4,7 @@ socket.http.TIMEOUT=360
 
 local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
-local games = "Game\tOrignal Price\tReduced Price\n"
+local games = os.date() .. "\nGame\tOrignal Price\tReduced Price\n"
 
 local response = http.request("http://store.steampowered.com/search/?specials=1")
 
