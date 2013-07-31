@@ -2,10 +2,6 @@ http = require "socket.http"
 require "socket"
 socket.http.TIMEOUT=360
 
-function round2(num, idp)
-  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
-end
-
 
 local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
@@ -31,7 +27,7 @@ for element in string.gmatch(response, "<h4>(.-)</h4>") do
 
 		local percentageDiff = priceDiff / original * 100
 
-		local percentageDiff = round2(percentageDiff, 0)
+		local percentageDiff = tonumber(string.format("%." .. 0 .. "f", percentageDiff))
 
 		games = games .. element .. "\t£" .. original .. "\t£" .. reduced .. "\t" .. percentageDiff .. "%\n"
 
