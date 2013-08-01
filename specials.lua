@@ -26,7 +26,7 @@ function sslCreate()
     })
 end
 
-local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
+--local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
 local games = os.date() .. "\nGame\tOrignal Price\tReduced Price\tDiscount\n"
 
@@ -59,18 +59,18 @@ for element in string.gmatch(response, "<h4>(.-)</h4>") do
 
 end
 
-local gone = output:write(games)
+--local gone = output:write(games)
 
 
-from = "<bradleybosher@gmail.com>"
+from = "<from>"
 
 rcpt = {
-  "<dbenstock@gmail.com>",
+  "<recipient>",
 }
 
 mesgt = {
   headers = {
-    to = "Daniel Benstock <dbenstock@gmail.com>",
+    to = "Name",
     subject = "Games you want are on offer"
   },
   body = games
