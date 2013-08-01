@@ -1,9 +1,32 @@
 http = require "socket.http"
 require "socket"
+local smtp = require("socket.smtp")
+local ssl = require 'ssl'
+local https = require 'ssl.https'
+local ltn12 = require 'ltn12'
+
 socket.http.TIMEOUT=360
 
 
-local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
+function sslCreate()
+    local sock = socket.tcp()
+    return setmetatable({
+        connect = function(_, host, port)
+            local r, e = sock:connect(host, port)
+            if not r then return r, e end
+            sock = ssl.wrap(sock, {mode='client', protocol='tlsv1'})
+            return sock:dohandshake()
+        end
+    }, {
+        __index = function(t,n)
+            return function(_, ...)
+                return sock[n](sock, ...)
+            end
+        end
+    })
+end
+
+--local output = assert(io.open("steam_specials.txt", "w"), "Failed to open output file")
 
 local games = os.date() .. "\nGame\tOrignal Price\tReduced Price\tDiscount\n"
 
@@ -36,26 +59,30 @@ for element in string.gmatch(response, "<h4>(.-)</h4>") do
 
 end
 
-local gone = output:write(games)
+--local gone = output:write(games)
 
-local smtp = require("socket.smtp")
 
-from = "<reminder@steam.com>"
+from = "<from>"
 
 rcpt = {
-  "<dbenstock@gmail.com>",
+  "<recipient>",
 }
 
 mesgt = {
   headers = {
-    to = "Daniel Benstock <dbenstock@gmail.com>",
+    to = "Name",
     subject = "Games you want are on offer"
   },
   body = games
 }
 
 r, e = smtp.send{
-  from = from,
-  rcpt = rcpt, 
-  source = smtp.message(mesgt)
+	from = from,
+	rcpt = rcpt,
+	source = smtp.message(mesgt),
+	user = 'username',
+	password = 'password',
+	server = 'smtp.gmail.com',
+	port = 465,
+	create = sslCreate
 }
